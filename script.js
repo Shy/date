@@ -2,6 +2,7 @@
 import hammerjs from "https://cdn.skypack.dev/hammerjs@2.0.8";
 // Gets the photo element
 var el = document.querySelector(".photo");
+
 // Creates the object
 var hammerTime = new Hammer(el);
 
@@ -13,11 +14,8 @@ hammerTime.on("tap", function (ev) {
     console.log(ev.type);
 
     el.style.backgroundImage =
-        'url("https://picsum.photos/' +
-        getRandomIntInclusive(500, 1000) +
-        "/" +
-        getRandomIntInclusive(500, 1000) +
-        '")';
+        'url("images/shy_' + getRandomIntInclusive(1, 7) + '.jpg"';
+    document.body.style.backgroundImage = el.style.backgroundImage;
 });
 // When user grabs the photo..
 https: hammerTime.on("pan", function (ev) {
@@ -98,11 +96,8 @@ hammerTime.on("pinchend", function (ev) {
 function repeat(transitionDuration = 350) {
     setTimeout(function () {
         el.style.backgroundImage =
-            'url("https://picsum.photos/' +
-            getRandomIntInclusive(500, 1000) +
-            "/" +
-            getRandomIntInclusive(500, 1000) +
-            '")';
+            'url("images/shy_' + getRandomIntInclusive(1, 7) + '.jpg"';
+        document.body.style.backgroundImage = el.style.backgroundImage;
         el.style.transform = "";
         setTimeout(function () {
             el.classList.remove("nope", "like", "super_like", "moving");
