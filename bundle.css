@@ -444,8 +444,10 @@ body {
 
 @media only screen and (max-width: 600px) {
   .smartphone {
-    border-radius: 0px;
+    border-radius: 1px;
+    border: none;
     width: 100%;
     height: 100%
   }
+
 }
