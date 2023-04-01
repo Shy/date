@@ -1,7 +1,12 @@
-// HammerJS is a small, standalone javascript-library that enables multitouch gestures like swipe, pinch, rotate, tap and drag
+import data from "./data.json";
+var index = 0;
+
 import hammerjs from "hammerjs";
 // Gets the photo element
 var el = document.querySelector(".photo");
+var job = document.getElementById("job");
+var company = document.getElementById("company");
+var location = document.getElementById("location");
 
 // Creates the object
 var hammerTime = new Hammer(el);
@@ -10,13 +15,14 @@ var hammerTime = new Hammer(el);
 hammerTime.get("pan").set({ direction: Hammer.DIRECTION_ALL });
 hammerTime.get("pinch").set({ enable: true });
 
-hammerTime.on("tap", function (ev) {
-    console.log(ev.type);
-
-    el.style.backgroundImage =
-        'url("images/shy_' + getRandomIntInclusive(1, 7) + '.jpg"';
-    document.body.style.backgroundImage = el.style.backgroundImage;
-});
+// hammerTime.on("tap", function (ev) {
+//     updatedData = getNextJson();
+//     job.innerHTML = updatedData["job"];
+//     company.innerHTML = updatedData["company"];
+//     location.innerHTML = updatedData["location"];
+//     el.style.backgroundImage = 'url("images/shy_' + updatedData["image"] + '.jpg"';
+//     document.body.style.backgroundImage = el.style.backgroundImage;
+// });
 // When user grabs the photo..
 https: hammerTime.on("pan", function (ev) {
     // When the photo start moving, the transition become "none" to avoid delay while dragging
@@ -95,8 +101,12 @@ hammerTime.on("pinchend", function (ev) {
 // The function that brings back the photo
 function repeat(transitionDuration = 350) {
     setTimeout(function () {
-        el.style.backgroundImage =
-            'url("images/shy_' + getRandomIntInclusive(1, 7) + '.jpg"';
+        updatedData = getNextJson();
+        console.log(updatedData);
+        job.innerText = updatedData["job"];
+        company.innerText = updatedData["company"];
+        location.innerText = updatedData["location"];
+        el.style.backgroundImage = 'url("images/shy_' + updatedData["image"] + '.jpg"';
         document.body.style.backgroundImage = el.style.backgroundImage;
         el.style.transform = "";
         setTimeout(function () {
@@ -161,8 +171,11 @@ function clock() {
     displayDate = d.toLocaleTimeString();
     document.querySelector(".clock").innerHTML = displayDate.substring(0, 5);
 }
-function getRandomIntInclusive(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1) + min); // The maximum is inclusive and the minimum is inclusive
+
+function getNextJson() {
+    index = index + 1;
+    if (index >= data.length) {
+        index = 0;
+    }
+    return data[index];
 }
