@@ -1,5 +1,5 @@
 // HammerJS is a small, standalone javascript-library that enables multitouch gestures like swipe, pinch, rotate, tap and drag
-import hammerjs from "https://cdn.skypack.dev/hammerjs@2.0.8";
+import hammerjs from "hammerjs";
 // Gets the photo element
 var el = document.querySelector(".photo");
 
