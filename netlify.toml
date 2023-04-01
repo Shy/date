@@ -2,6 +2,10 @@
 [dev]
 # Just run netlify dev -d app/build/
 
+[build]
+  publish = "dist/"
+  command = "npm run build"
+
 
 [[plugins]]
   package = "netlify-plugin-inline-source"
