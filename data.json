@@ -1,19 +1,43 @@
 [{
     "job":"Single Guy",
-    "company":"Misc Tech Party",
-    "location":"New York City",
+    "company":"Assorted Parties",
+    "location":"Brooklyn, NY",
     "image":"1"
 
 },{
     "job":"Amature Chef",
     "company":"Sunday Nights",
-    "location":"Brooklyn",
+    "location":"Brooklyn, NY",
     "image":"2"
+
+},{
+    "job":"Baker",
+    "company":"For Friends",
+    "location":"Brooklyn, NY",
+    "image":"3"
+
+},{
+    "job":"Looks good in a suit",
+    "company":"Weddings",
+    "location":"Brooklyn, NY",
+    "image":"4"
+
+},{
+    "job":"Bake Sale Participant",
+    "company":"Bake Sales",
+    "location":"Brooklyn",
+    "image":"5"
 
 },{
     "job":"Ordained Minister",
     "company":"For Friends",
     "location":"NY,NY",
-    "image":"3"
+    "image":"6"
+
+},{
+    "job":"Amature Chef",
+    "company":"Sunday Nights",
+    "location":"Brooklyn",
+    "image":"7"
 
 }]

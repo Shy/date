@@ -15,14 +15,6 @@ var hammerTime = new Hammer(el);
 hammerTime.get("pan").set({ direction: Hammer.DIRECTION_ALL });
 hammerTime.get("pinch").set({ enable: true });
 
-// hammerTime.on("tap", function (ev) {
-//     updatedData = getNextJson();
-//     job.innerHTML = updatedData["job"];
-//     company.innerHTML = updatedData["company"];
-//     location.innerHTML = updatedData["location"];
-//     el.style.backgroundImage = 'url("images/shy_' + updatedData["image"] + '.jpg"';
-//     document.body.style.backgroundImage = el.style.backgroundImage;
-// });
 // When user grabs the photo..
 https: hammerTime.on("pan", function (ev) {
     // When the photo start moving, the transition become "none" to avoid delay while dragging
@@ -101,13 +93,12 @@ hammerTime.on("pinchend", function (ev) {
 // The function that brings back the photo
 function repeat(transitionDuration = 350) {
     setTimeout(function () {
-        updatedData = getNextJson();
+        let updatedData = getNextJson();
         console.log(updatedData);
         job.innerText = updatedData["job"];
         company.innerText = updatedData["company"];
         location.innerText = updatedData["location"];
         el.style.backgroundImage = 'url("images/shy_' + updatedData["image"] + '.jpg"';
-        document.body.style.backgroundImage = el.style.backgroundImage;
         el.style.transform = "";
         setTimeout(function () {
             el.classList.remove("nope", "like", "super_like", "moving");
@@ -162,15 +153,6 @@ document
     .parentNode.addEventListener("click", function () {
         console.log("info");
     });
-
-// Clock
-var clockTicking = setInterval(clock, 1000);
-function clock() {
-    var d = new Date(),
-        displayDate;
-    displayDate = d.toLocaleTimeString();
-    document.querySelector(".clock").innerHTML = displayDate.substring(0, 5);
-}
 
 function getNextJson() {
     index = index + 1;

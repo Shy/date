@@ -7,14 +7,14 @@
 }
 
 body {
-  backdrop-filter: blur(8px);
+  /* backdrop-filter: blur(8px); */
   height: 100vh;
   width: 100vw;
   font-family: "Roboto", sans-serif;
-  background: #6495ed2b;
+  background:   #FAF9F6;
   overflow: hidden;
   display: flex;
-  background: url("images/shy_1.jpg") center center/cover;
+  /* background: url("images/shy_1.jpg") center center/cover; */
   background-position: bottom;
   background-repeat: no-repeat;
   background-size: cover;
