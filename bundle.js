@@ -20,8 +20,10 @@ https: hammerTime.on("pan", function (ev) {
     // When the photo start moving, the transition become "none" to avoid delay while dragging
     el.classList.add("moving");
     // If the photo go 80px left/right, the "nope"/"like" stamp appears using css::after
-    el.classList.toggle("nope", ev.deltaX < -80);
     el.classList.toggle("like", ev.deltaX > 80);
+    // Selected nope must be a mistake so we can shift it to just a like.
+    // el.classList.toggle("nope", ev.deltaX < -80);
+    el.classList.toggle("like", ev.deltaX < -80);
     el.classList.toggle("super_like", (ev.deltaY < -72) & (Math.abs(ev.deltaX) < 80));
     // Calculates photo rotation based on offset
     var rotate = ev.deltaX * ev.deltaY * 4e-4;
@@ -121,8 +123,9 @@ function buttonEvent(reaction) {
         // If the reaction was a "like", stamps "like"
         el.classList.toggle("like");
     } else if (reaction == "dislike") {
-        // If the reaction was a "dislike", stamps "nope" and moves the photo to the left
-        el.classList.toggle("nope");
+        // If the reaction was a "dislike", stamps "like" because it was probally a mistake and moves the photo to the left.
+        el.classList.toggle("like");
+        // el.classList.toggle("nope");
         x *= -1;
     } else if (reaction == "super_like") {
         el.classList.toggle("super_like");
