@@ -2,12 +2,15 @@
 
 A swipe-style dating app with exactly one profile. Nope is disabled.
 
+## Prerequisites
+- Node 26 (see `.nvmrc`)
+
 ## Quick Start
 1. `npm install`
 2. `npm run dev`
 
 ## Deploy
-Pushes to `main` build with Vite and deploy to GitHub Pages via [.github/workflows/deploy.yml](.github/workflows/deploy.yml).
+Pushes to `main` build with Vite and deploy to GitHub Pages via [.github/workflows/deploy.yml](.github/workflows/deploy.yml). Custom domain: `shy.date` ([public/CNAME](public/CNAME)).
 
 ## Key Files
 - [src/main.js](src/main.js) - Swipe/button handling (Pointer Events)
