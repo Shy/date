@@ -16,8 +16,11 @@
   <body>
     <main class="smartphone">
       <div class="screen">
-        <div class="person">
-          <figure class="photo" aria-live="polite">
+        <div class="deck" aria-live="polite"></div>
+        <template id="card-template">
+          <figure class="photo">
+            <span class="stamp stamp-like" aria-hidden="true">LIKE</span>
+            <span class="stamp stamp-super" aria-hidden="true">SUPER<br />LIKE</span>
             <figcaption class="personal">
               <div class="name-age">
                 <h1 class="name">Shy</h1>
@@ -25,15 +28,15 @@
               </div>
               <div class="about">
                 <i data-lucide="briefcase" aria-hidden="true"></i>
-                <p id="job"></p>
+                <p data-field="job"></p>
                 <i data-lucide="graduation-cap" aria-hidden="true"></i>
-                <p id="company"></p>
+                <p data-field="company"></p>
                 <i data-lucide="map-pin" aria-hidden="true"></i>
-                <p id="location"></p>
+                <p data-field="location"></p>
               </div>
             </figcaption>
           </figure>
-        </div>
+        </template>
         <nav class="commands">
           <button class="command small nope" type="button" data-reaction="dislike" aria-label="Nope">
             <i data-lucide="x"></i>

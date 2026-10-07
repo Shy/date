@@ -2,115 +2,215 @@ import { createIcons, Briefcase, GraduationCap, MapPin, X, Star, Heart } from "l
 import profiles from "./data.json";
 import "./style.css";
 
-createIcons({ icons: { Briefcase, GraduationCap, MapPin, X, Star, Heart } });
+const icons = { Briefcase, GraduationCap, MapPin, X, Star, Heart };
+createIcons({ icons });
 
-const SWIPE_X = 80;
-const SWIPE_Y = 72;
+const STACK_SIZE = 3;
+const SWIPE_X = 100; // px past which a release counts as a swipe
+const SWIPE_UP = 120;
+const FLICK_VELOCITY = 0.5; // px/ms; a fast flick counts even if short
+const ROTATION = 0.08; // deg per px of horizontal drag
+const BEHIND_SCALE = 0.94;
+const SPRING = "cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const deck = document.querySelector(".deck");
+const template = document.getElementById("card-template");
 const imageUrl = (n) => `${import.meta.env.BASE_URL}images/shy_${n}.jpg`;
 
-const photo = document.querySelector(".photo");
-const fields = ["job", "company", "location"].map((id) => document.getElementById(id));
-
-// Warm the cache so the next card never flashes blank
+// Warm the cache so incoming cards never flash blank
 profiles.forEach((p) => (new Image().src = imageUrl(p.image)));
 
-let index = 0;
-render(profiles[index]);
+let nextProfile = 0;
 
-function render(profile) {
-  fields.forEach((el) => (el.textContent = profile[el.id]));
-  photo.style.backgroundImage = `url("${imageUrl(profile.image)}")`;
+function buildCard() {
+  const profile = profiles[nextProfile];
+  nextProfile = (nextProfile + 1) % profiles.length;
+  const card = template.content.firstElementChild.cloneNode(true);
+  card.style.backgroundImage = `url("${imageUrl(profile.image)}")`;
+  card.querySelectorAll("[data-field]").forEach((el) => (el.textContent = profile[el.dataset.field]));
+  createIcons({ icons, root: card });
+  return card;
 }
 
-function setStamp(stamp) {
-  photo.classList.toggle("like", stamp === "like");
-  photo.classList.toggle("super_like", stamp === "super_like");
+// Cards are stacked in DOM order: the first non-flying card is the top card
+const stack = () => [...deck.querySelectorAll(".photo:not(.flying)")];
+const topCard = () => stack()[0];
+
+function fillDeck() {
+  while (stack().length < STACK_SIZE) deck.append(buildCard());
+  layoutStack(0);
 }
 
-// Faster flicks fade faster, clamped between 150 and 400ms
-const fadeDuration = (velocity) => Math.min(400, Math.max(150, 250 / (velocity + 0.4)));
-
-function throwCard({ x, y, rotate, duration }) {
-  photo.style.transitionDuration = `${duration}ms`;
-  photo.style.transform = `translate(${x}px, ${y}px) rotate(${rotate}deg)`;
-  photo.style.opacity = 0;
-  nextCard(duration);
+// progress (0..1) is how far the top card has been dragged toward a swipe;
+// the card behind grows into place as the top card leaves
+function layoutStack(progress) {
+  stack().forEach((card, i) => {
+    if (i === 0) return;
+    const depth = Math.max(0, i - progress);
+    card.style.transform = `scale(${1 - (1 - BEHIND_SCALE) * Math.min(depth, 1)})`;
+    card.style.zIndex = STACK_SIZE - i;
+    card.inert = true;
+  });
+  const top = topCard();
+  if (top) {
+    top.style.zIndex = STACK_SIZE;
+    top.inert = false;
+  }
 }
 
-function nextCard(duration) {
-  setTimeout(() => {
-    index = (index + 1) % profiles.length;
-    render(profiles[index]);
-    photo.style.transform = "";
-    setTimeout(() => {
-      photo.classList.remove("like", "super_like", "moving");
-      photo.style.opacity = 1;
-    }, duration);
-  }, duration);
+function setStamps(card, dx, dy) {
+  const like = Math.min(1, Math.max(0, (Math.abs(dx) - 20) / (SWIPE_X - 20)));
+  const up = Math.min(1, Math.max(0, (-dy - 30) / (SWIPE_UP - 30)));
+  // Whichever direction dominates wins the stamp
+  const superWins = up > like;
+  card.querySelector(".stamp-like").style.opacity = superWins ? 0 : like;
+  card.querySelector(".stamp-super").style.opacity = superWins ? up : 0;
 }
 
-// Drag handling via Pointer Events (mouse, touch, pen)
+function cardTransform(dx, dy, rotateSign) {
+  return `translate(${dx}px, ${dy}px) rotate(${dx * ROTATION * rotateSign}deg)`;
+}
+
+// Throw the top card off-screen, then drop it and refill the stack
+function flyOut(card, { dx, dy, vx = 0, vy = 0, rotateSign = 1, direction }) {
+  card.classList.add("flying");
+  card.inert = true;
+  card.style.zIndex = STACK_SIZE + 1;
+  stack().forEach((c) => (c.style.transition = `transform 350ms ${SPRING}`));
+  layoutStack(0);
+  fillDeck();
+
+  const distance = Math.max(innerWidth, innerHeight) * 1.2;
+  let toX, toY;
+  if (direction === "up") {
+    toX = dx + vx * 200;
+    toY = -distance;
+  } else {
+    const sign = Math.sign(dx) || Math.sign(vx) || 1;
+    toX = sign * distance;
+    // Keep the throw angle consistent with the release velocity
+    toY = dy + (Math.abs(vx) > 0.1 ? (vy / Math.abs(vx)) * (distance - Math.abs(dx)) : 0);
+  }
+  const speed = Math.max(Math.hypot(vx, vy), 1);
+  const duration = reducedMotion ? 150 : Math.min(500, Math.max(250, 450 / speed));
+
+  card
+    .animate(
+      [
+        { transform: cardTransform(dx, dy, rotateSign) },
+        { transform: cardTransform(toX, toY, rotateSign) },
+      ],
+      { duration, easing: "cubic-bezier(0.2, 0.6, 0.4, 1)", fill: "forwards" },
+    )
+    .finished.then(() => card.remove());
+  // Animations pause in background tabs; don't let thrown cards pile up
+  setTimeout(() => card.remove(), duration + 100);
+}
+
+function snapBack(card) {
+  card.style.transition = `transform ${reducedMotion ? 0 : 450}ms ${SPRING}`;
+  card.style.transform = "";
+  card.querySelectorAll(".stamp").forEach((s) => {
+    s.style.transition = "opacity 200ms";
+    s.style.opacity = 0;
+  });
+  stack().slice(1).forEach((c) => (c.style.transition = `transform 450ms ${SPRING}`));
+  layoutStack(0);
+}
+
+// Dragging
 let drag = null;
 
-photo.addEventListener("pointerdown", (e) => {
-  photo.setPointerCapture(e.pointerId);
-  drag = { startX: e.clientX, startY: e.clientY, startT: e.timeStamp, dx: 0, dy: 0 };
-  photo.classList.add("moving");
+deck.addEventListener("pointerdown", (e) => {
+  const card = topCard();
+  if (!card || !card.contains(e.target) || drag) return;
+  card.setPointerCapture(e.pointerId);
+  const rect = card.getBoundingClientRect();
+  drag = {
+    card,
+    pointerId: e.pointerId,
+    startX: e.clientX,
+    startY: e.clientY,
+    dx: 0,
+    dy: 0,
+    // Grabbing the bottom half tilts the card the other way, like holding a real card
+    rotateSign: e.clientY > rect.top + rect.height / 2 ? -1 : 1,
+    samples: [{ x: e.clientX, y: e.clientY, t: e.timeStamp }],
+  };
+  card.style.transition = "none";
+  card.querySelectorAll(".stamp").forEach((s) => (s.style.transition = "none"));
+  stack().forEach((c) => (c.style.transition = "none"));
+  card.classList.add("moving");
 });
 
-photo.addEventListener("pointermove", (e) => {
-  if (!drag) return;
+deck.addEventListener("pointermove", (e) => {
+  if (!drag || e.pointerId !== drag.pointerId) return;
   drag.dx = e.clientX - drag.startX;
   drag.dy = e.clientY - drag.startY;
-  const { dx, dy } = drag;
-  // Swiping either direction is a like. Nope is not an option.
-  if (Math.abs(dx) > SWIPE_X) setStamp("like");
-  else if (dy < -SWIPE_Y) setStamp("super_like");
-  else setStamp(null);
-  photo.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx * dy * 4e-4}deg)`;
+  drag.samples.push({ x: e.clientX, y: e.clientY, t: e.timeStamp });
+  if (drag.samples.length > 5) drag.samples.shift();
+
+  const { card, dx, dy, rotateSign } = drag;
+  card.style.transform = cardTransform(dx, dy, rotateSign);
+  setStamps(card, dx, dy);
+  layoutStack(Math.min(1, Math.max(Math.abs(dx) / SWIPE_X, -dy / SWIPE_UP, 0)));
 });
 
 function endDrag(e) {
-  if (!drag) return;
-  const { dx, dy, startT } = drag;
+  if (!drag || e.pointerId !== drag.pointerId) return;
+  const { card, dx, dy, rotateSign, samples } = drag;
   drag = null;
-  const velocity = Math.hypot(dx, dy) / Math.max(1, e.timeStamp - startT);
-  const duration = fadeDuration(velocity);
+  card.classList.remove("moving");
 
-  if (Math.abs(dx) > SWIPE_X) {
-    const mult = Math.max(1.4, velocity);
-    throwCard({ x: dx * 1.4 * mult, y: dy * mult, rotate: dx * dy * 4e-4 * mult, duration });
-  } else if (dy < -SWIPE_Y) {
-    throwCard({ x: 0, y: dy * Math.max(2, velocity), rotate: 0, duration });
+  // Velocity from the last few samples, so a pause before release reads as slow
+  const first = samples[0];
+  const last = samples.at(-1);
+  const dt = Math.max(1, last.t - first.t);
+  const vx = (last.x - first.x) / dt;
+  const vy = (last.y - first.y) / dt;
+
+  const flickX = Math.abs(vx) > FLICK_VELOCITY && Math.sign(vx) === Math.sign(dx);
+  const flickUp = vy < -FLICK_VELOCITY && dy < 0 && Math.abs(vy) > Math.abs(vx);
+
+  if ((-dy > SWIPE_UP && -dy > Math.abs(dx)) || flickUp) {
+    flyOut(card, { dx, dy, vx, vy, rotateSign, direction: "up" });
+  } else if (Math.abs(dx) > SWIPE_X || flickX) {
+    flyOut(card, { dx, dy, vx, vy, rotateSign, direction: "side" });
   } else {
-    photo.classList.remove("moving");
-    setStamp(null);
-    photo.style.transform = "";
+    snapBack(card);
   }
 }
 
-photo.addEventListener("pointerup", endDrag);
-photo.addEventListener("pointercancel", endDrag);
+deck.addEventListener("pointerup", endDrag);
+deck.addEventListener("pointercancel", endDrag);
 
 // Buttons
-document.querySelectorAll("[data-reaction]").forEach((btn) =>
-  btn.addEventListener("click", () => react(btn.dataset.reaction)),
-);
-
 function react(reaction) {
-  const duration = Math.random() * 300 + 300;
-  let x = Math.random() * 300 + 100;
-  let y = Math.random() * 400 - 200;
-  let rotate = x * y * 4e-4;
+  const card = topCard();
+  if (!card || drag) return;
 
   if (reaction === "super_like") {
-    setStamp("super_like");
-    x = rotate = 0;
-    y = -Math.abs(y) * 3;
-  } else {
-    // A "nope" was surely a misclick, so it counts as a like
-    setStamp("like");
-    if (reaction === "dislike") x *= -1;
+    card.querySelector(".stamp-super").style.opacity = 1;
+    flyOut(card, { dx: 0, dy: 0, vx: 0, vy: -1.5, direction: "up" });
+    return;
   }
-  throwCard({ x, y, rotate, duration: duration * 0.8 });
+  // A "nope" was surely a misclick, so it counts as a like (it still goes left)
+  card.querySelector(".stamp-like").style.opacity = 1;
+  const sign = reaction === "dislike" ? -1 : 1;
+  flyOut(card, { dx: 0, dy: 0, vx: sign * 1.5, vy: -0.3, direction: "side" });
 }
+
+document.querySelectorAll("[data-reaction]").forEach((btn) =>
+  btn.addEventListener("click", () => {
+    btn.animate([{ scale: 1 }, { scale: 0.85 }, { scale: 1 }], { duration: 250, easing: SPRING });
+    react(btn.dataset.reaction);
+  }),
+);
+
+addEventListener("keydown", (e) => {
+  const key = { ArrowLeft: "dislike", ArrowRight: "like", ArrowUp: "super_like" }[e.key];
+  if (key) react(key);
+});
+
+fillDeck();

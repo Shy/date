@@ -38,62 +38,71 @@ body {
   background: var(--screen);
   border: 2px solid rgb(0 0 0 / 0.15);
   border-radius: 7px;
+  overflow: hidden;
 }
 
-.person {
+.deck {
+  position: relative;
   flex: 1;
   width: 99%;
-  background: #d6d5d5;
-  border-radius: 10px;
+  margin-top: 4px;
 }
 
 .photo {
-  position: relative;
-  height: 100%;
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: flex-end;
   color: #eee;
-  background: center / cover no-repeat;
+  background: #d6d5d5 center / cover no-repeat;
   border-radius: 10px;
   box-shadow: 0 2px 7px 0 rgb(136 136 136 / 0.7);
   cursor: grab;
   touch-action: none;
   user-select: none;
-  transition: 300ms;
+  -webkit-user-select: none;
+  will-change: transform;
+  /* Cards behind ease into place when the top card leaves */
+  transition: transform 300ms ease-out;
 }
 
 .photo.moving {
-  transition: none;
   cursor: grabbing;
 }
 
-.photo.like::after,
-.photo.super_like::after {
-  position: absolute;
-  padding: 0.2rem 0.4rem;
-  border: 6px solid;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 3rem;
-  text-align: center;
+.photo.flying {
+  pointer-events: none;
 }
 
-.photo.like::after {
-  content: "LIKE";
-  color: var(--like);
+.stamp {
+  position: absolute;
   top: 8%;
+  padding: 0.2rem 0.5rem;
+  border: 5px solid;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 2.6rem;
+  line-height: 1;
+  text-align: center;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stamp-like {
+  color: var(--like);
   left: 8%;
   rotate: -15deg;
 }
 
-.photo.super_like::after {
-  content: "SUPER LIKE";
+.stamp-super {
   color: var(--super);
-  font-size: 2.8rem;
-  width: 150px;
-  bottom: 30%;
-  left: 24%;
-  rotate: -15deg;
+  top: auto;
+  bottom: 32%;
+  left: 50%;
+  translate: -50% 0;
+  rotate: -10deg;
+  font-size: 2.2rem;
 }
 
 .personal {
