@@ -1,6 +1,6 @@
 # date
 
-A swipe-style dating app with exactly one profile. Nope is disabled.
+A swipe-style dating app with exactly one profile.
 
 ## Prerequisites
 - Node 26 (see `.nvmrc`)

@@ -60,11 +60,12 @@ function layoutStack(progress) {
 }
 
 function setStamps(card, dx, dy) {
-  const like = Math.min(1, Math.max(0, (Math.abs(dx) - 20) / (SWIPE_X - 20)));
+  const side = Math.min(1, Math.max(0, (Math.abs(dx) - 20) / (SWIPE_X - 20)));
   const up = Math.min(1, Math.max(0, (-dy - 30) / (SWIPE_UP - 30)));
   // Whichever direction dominates wins the stamp
-  const superWins = up > like;
-  card.querySelector(".stamp-like").style.opacity = superWins ? 0 : like;
+  const superWins = up > side;
+  card.querySelector(".stamp-like").style.opacity = !superWins && dx > 0 ? side : 0;
+  card.querySelector(".stamp-nope").style.opacity = !superWins && dx < 0 ? side : 0;
   card.querySelector(".stamp-super").style.opacity = superWins ? up : 0;
 }
 
@@ -195,9 +196,9 @@ function react(reaction) {
     flyOut(card, { dx: 0, dy: 0, vx: 0, vy: -1.5, direction: "up" });
     return;
   }
-  // A "nope" was surely a misclick, so it counts as a like (it still goes left)
-  card.querySelector(".stamp-like").style.opacity = 1;
-  const sign = reaction === "dislike" ? -1 : 1;
+  const nope = reaction === "dislike";
+  card.querySelector(nope ? ".stamp-nope" : ".stamp-like").style.opacity = 1;
+  const sign = nope ? -1 : 1;
   flyOut(card, { dx: 0, dy: 0, vx: sign * 1.5, vy: -0.3, direction: "side" });
 }
 

@@ -95,6 +95,12 @@ body {
   rotate: -15deg;
 }
 
+.stamp-nope {
+  color: var(--nope);
+  right: 8%;
+  rotate: 15deg;
+}
+
 .stamp-super {
   color: var(--super);
   top: auto;
