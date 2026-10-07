@@ -134,3 +134,6 @@ _site/
 
 # Local Netlify folder
 .netlify
+
+# Claude Code local config
+.claude/

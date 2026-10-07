@@ -1,0 +1,188 @@
+:root {
+  --bg: #faf9f6;
+  --screen: #fffafa;
+  --like: #1be4a1;
+  --super: #2db1ff;
+  --nope: #fd5068;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  font-family: "Roboto", system-ui, sans-serif;
+  background: var(--bg);
+}
+
+.smartphone {
+  width: clamp(290px, 49dvh, 360px);
+  height: clamp(580px, 98dvh, 720px);
+  border: 8px solid black;
+  border-radius: 15px;
+}
+
+.screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  background: var(--screen);
+  border: 2px solid rgb(0 0 0 / 0.15);
+  border-radius: 7px;
+}
+
+.person {
+  flex: 1;
+  width: 99%;
+  background: #d6d5d5;
+  border-radius: 10px;
+}
+
+.photo {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  color: #eee;
+  background: center / cover no-repeat;
+  border-radius: 10px;
+  box-shadow: 0 2px 7px 0 rgb(136 136 136 / 0.7);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  transition: 300ms;
+}
+
+.photo.moving {
+  transition: none;
+  cursor: grabbing;
+}
+
+.photo.like::after,
+.photo.super_like::after {
+  position: absolute;
+  padding: 0.2rem 0.4rem;
+  border: 6px solid;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 3rem;
+  text-align: center;
+}
+
+.photo.like::after {
+  content: "LIKE";
+  color: var(--like);
+  top: 8%;
+  left: 8%;
+  rotate: -15deg;
+}
+
+.photo.super_like::after {
+  content: "SUPER LIKE";
+  color: var(--super);
+  font-size: 2.8rem;
+  width: 150px;
+  bottom: 30%;
+  left: 24%;
+  rotate: -15deg;
+}
+
+.personal {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 0.41) 24%);
+  border-radius: 10px;
+}
+
+.name-age {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.name {
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+.age {
+  font-size: 1.6rem;
+}
+
+.about {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px 6px;
+}
+
+.about svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.commands {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.command {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 6px 0 rgb(112 125 134 / 0.14);
+  cursor: pointer;
+  transition: 500ms ease;
+}
+
+.command.small {
+  width: 48px;
+  height: 48px;
+}
+
+.command svg {
+  width: 50%;
+  height: 50%;
+  stroke-width: 2.5;
+  transition: 500ms ease;
+}
+
+.command:is(:hover, :focus-visible) {
+  scale: 1.1;
+  box-shadow: 0 2px 6px 0 rgb(112 125 134 / 0.33);
+}
+
+.command:is(:hover, :focus-visible) svg {
+  scale: 1.15;
+}
+
+.nope { color: var(--nope); }
+.super { color: var(--super); }
+.heart { color: var(--like); }
+.super svg, .heart svg { fill: currentColor; }
+
+@media (max-width: 600px) {
+  .smartphone {
+    width: 100%;
+    height: 100dvh;
+    border: none;
+    border-radius: 0;
+  }
+}

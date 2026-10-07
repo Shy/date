@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "another dumb website for another dumb domain",
   "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.html && cp -r images/ dist/images"
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview"
   },
   "repository": {
     "type": "git",
@@ -17,10 +18,11 @@
     "url": "https://github.com/Shy/date/issues"
   },
   "homepage": "https://github.com/Shy/date#readme",
+  "type": "module",
   "devDependencies": {
-    "parcel": "^2.8.3"
+    "vite": "^8.3.3"
   },
   "dependencies": {
-    "hammerjs": "^2.0.8"
+    "lucide": "^1.52.0"
   }
 }
