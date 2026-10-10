@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "shy-date-match",
+  "main": "src/index.js",
+  "compatibility_date": "2026-10-01",
+  "routes": [{ "pattern": "shy.date/api/*", "zone_name": "shy.date" }],
+  "send_email": [{ "name": "EMAIL" }],
+  "vars": {
+    "FROM_ADDRESS": "no-reply@shy.date",
+    "ALLOWED_ORIGINS": "https://shy.date,https://www.shy.date,http://localhost:5173"
+  },
+  // MATCH_TO (your verified Email Routing address) is a secret so it stays out of this public repo:
+  //   npx wrangler secret put MATCH_TO
+  "observability": { "enabled": true }
+}

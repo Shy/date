@@ -137,3 +137,7 @@ _site/
 
 # Claude Code local config
 .claude/
+
+# Wrangler
+.wrangler/
+.dev.vars*

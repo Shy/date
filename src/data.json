@@ -1,43 +1,114 @@
-[{
-    "job":"Single Guy",
-    "company":"Assorted Parties",
-    "location":"Brooklyn, NY",
-    "image":"1"
-
-},{
-    "job":"Amateur Chef",
-    "company":"Sunday Nights",
-    "location":"Brooklyn, NY",
-    "image":"2"
-
-},{
-    "job":"Aspiring Baker",
-    "company":"For Friends",
-    "location":"Brooklyn, NY",
-    "image":"3"
-
-},{
-    "job":"Looks good in a suit",
-    "company":"Weddings",
-    "location":"Brooklyn, NY",
-    "image":"4"
-
-},{
-    "job":"Bake Sale Participant",
-    "company":"Bake Sales",
-    "location":"Brooklyn",
-    "image":"5"
-
-},{
-    "job":"Ordained Minister",
-    "company":"When asked",
-    "location":"NY,NY",
-    "image":"6"
-
-},{
-    "job":"Amateur Chef",
-    "company":"Sunday Nights",
-    "location":"Brooklyn",
-    "image":"7"
-
-}]
+[
+  {
+    "job": "Single Guy",
+    "company": "Assorted Parties",
+    "location": "Brooklyn, NY",
+    "image": "1",
+    "prompts": [
+      {
+        "question": "My ideal party",
+        "answer": "TODO"
+      },
+      {
+        "question": "The way to win me over is",
+        "answer": "TODO"
+      }
+    ]
+  },
+  {
+    "job": "Amateur Chef",
+    "company": "Sunday Nights",
+    "location": "Brooklyn, NY",
+    "image": "2",
+    "prompts": [
+      {
+        "question": "My signature dish",
+        "answer": "TODO"
+      },
+      {
+        "question": "Dinner guests always ask me to make",
+        "answer": "TODO"
+      }
+    ]
+  },
+  {
+    "job": "Aspiring Baker",
+    "company": "For Friends",
+    "location": "Brooklyn, NY",
+    "image": "3",
+    "prompts": [
+      {
+        "question": "Best thing I've ever baked",
+        "answer": "TODO"
+      },
+      {
+        "question": "My biggest kitchen disaster",
+        "answer": "TODO"
+      }
+    ]
+  },
+  {
+    "job": "Looks good in a suit",
+    "company": "Weddings",
+    "location": "Brooklyn, NY",
+    "image": "4",
+    "prompts": [
+      {
+        "question": "Best wedding I've been to",
+        "answer": "TODO"
+      },
+      {
+        "question": "My go-to dance move",
+        "answer": "TODO"
+      }
+    ]
+  },
+  {
+    "job": "Bake Sale Participant",
+    "company": "Bake Sales",
+    "location": "Brooklyn",
+    "image": "5",
+    "prompts": [
+      {
+        "question": "My bake sale strategy",
+        "answer": "TODO"
+      },
+      {
+        "question": "I'll fall for you if",
+        "answer": "TODO"
+      }
+    ]
+  },
+  {
+    "job": "Ordained Minister",
+    "company": "When asked",
+    "location": "NY,NY",
+    "image": "6",
+    "prompts": [
+      {
+        "question": "How I became ordained",
+        "answer": "TODO"
+      },
+      {
+        "question": "Weirdest ceremony I've officiated",
+        "answer": "TODO"
+      }
+    ]
+  },
+  {
+    "job": "Amateur Chef",
+    "company": "Sunday Nights",
+    "location": "Brooklyn",
+    "image": "7",
+    "prompts": [
+      {
+        "question": "A typical Sunday",
+        "answer": "TODO"
+      },
+      {
+        "question": "I'm looking for",
+        "answer": "TODO"
+      }
+    ]
+  }
+]

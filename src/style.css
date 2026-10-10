@@ -39,6 +39,7 @@ body {
   border: 2px solid rgb(0 0 0 / 0.15);
   border-radius: 7px;
   overflow: hidden;
+  position: relative;
 }
 
 .deck {
@@ -51,14 +52,13 @@ body {
 .photo {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: flex-end;
-  color: #eee;
-  background: #d6d5d5 center / cover no-repeat;
+  overflow: hidden;
+  background: #f1efec;
   border-radius: 10px;
   box-shadow: 0 2px 7px 0 rgb(136 136 136 / 0.7);
   cursor: grab;
-  touch-action: none;
+  /* Vertical touch drags scroll the prompts natively; horizontal ones are ours */
+  touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
   will-change: transform;
@@ -74,8 +74,79 @@ body {
   pointer-events: none;
 }
 
+.card-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.card-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.hero {
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  color: #eee;
+  background: #d6d5d5 center / cover no-repeat;
+}
+
+.more-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 12px;
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+
+.more-hint svg {
+  width: 1rem;
+  height: 1rem;
+  animation: nudge 1.6s ease-in-out infinite;
+}
+
+@keyframes nudge {
+  50% { translate: 0 -3px; }
+}
+
+.prompts:empty {
+  display: none;
+}
+
+.prompts {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+}
+
+.prompt {
+  padding: 18px 16px 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.08);
+}
+
+.prompt h2 {
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b6b6b;
+}
+
+.prompt p {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #1a1a1a;
+}
+
 .stamp {
   position: absolute;
+  z-index: 1;
   top: 8%;
   padding: 0.2rem 0.5rem;
   border: 5px solid;
@@ -113,9 +184,8 @@ body {
 
 .personal {
   width: 100%;
-  padding: 15px;
+  padding: 15px 15px 10px;
   background: linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 0.41) 24%);
-  border-radius: 10px;
 }
 
 .name-age {
@@ -192,6 +262,192 @@ body {
 .super { color: var(--super); }
 .heart { color: var(--like); }
 .super svg, .heart svg { fill: currentColor; }
+
+/* It's a Match! */
+.match {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 28px 22px;
+  overflow-y: auto;
+  color: #fff;
+  text-align: center;
+  background: linear-gradient(160deg, rgb(27 228 161 / 0.92), rgb(8 120 200 / 0.94));
+  backdrop-filter: blur(6px);
+}
+
+.match[hidden] {
+  display: none;
+}
+
+.match-title {
+  margin-top: auto;
+  font-size: 2.6rem;
+  font-weight: 700;
+  font-style: italic;
+  letter-spacing: -0.01em;
+}
+
+.match-sub {
+  font-size: 0.95rem;
+  opacity: 0.9;
+}
+
+.match-photos {
+  display: flex;
+  margin-top: 6px;
+}
+
+.match-photo {
+  width: 104px;
+  height: 104px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 0.2) center / cover no-repeat;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.2);
+}
+
+.match-photo.you {
+  position: relative;
+  margin-left: -14px;
+  display: grid;
+  place-items: center;
+  border-style: dashed;
+  background-color: rgb(255 255 255 / 0.28);
+  cursor: pointer;
+  transition: background-color 200ms, scale 200ms;
+}
+
+.match-photo.you:hover {
+  background-color: rgb(255 255 255 / 0.4);
+  scale: 1.04;
+}
+
+.match-photo.you.filled {
+  border-style: solid;
+}
+
+.match-photo-empty {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 0 16px;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.match-photo-empty svg {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
+.match-photo.you.filled .match-photo-empty {
+  display: none;
+}
+
+/* Corner badge: the usual "tap to add/change" cue */
+.match-photo.you:not(.filled) .match-photo-badge {
+  display: none;
+}
+
+.match-photo-badge {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: #0878c8;
+  background: #fff;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.25);
+}
+
+.match-photo-badge svg {
+  width: 17px;
+  height: 17px;
+}
+
+.match-photo-caption {
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+.match:has(#match-photo-input:focus-visible) .match-photo.you {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+
+.match-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: auto;
+}
+
+.match-form :is(input, textarea) {
+  width: 100%;
+  padding: 11px 14px;
+  border: none;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 1rem; /* 16px+ stops iOS zooming into the field */
+  color: #1a1a1a;
+  background: #fff;
+  resize: none;
+}
+
+.match-form button {
+  padding: 12px;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.match-send {
+  color: #0878c8;
+  background: #fff;
+}
+
+.match-send:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.match-skip {
+  color: #fff;
+  background: transparent;
+}
+
+.match-status {
+  min-height: 1.2em;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .more-hint svg { animation: none; }
+}
 
 @media (max-width: 600px) {
   .smartphone {

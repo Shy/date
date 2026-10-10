@@ -22,20 +22,26 @@
             <span class="stamp stamp-like" aria-hidden="true">LIKE</span>
             <span class="stamp stamp-nope" aria-hidden="true">NOPE</span>
             <span class="stamp stamp-super" aria-hidden="true">SUPER<br />LIKE</span>
-            <figcaption class="personal">
-              <div class="name-age">
-                <h1 class="name">Shy</h1>
-                <span class="age">35</span>
+            <div class="card-scroll">
+              <div class="hero">
+                <div class="personal">
+                  <div class="name-age">
+                    <h1 class="name">Shy</h1>
+                    <span class="age">35</span>
+                  </div>
+                  <div class="about">
+                    <i data-lucide="briefcase" aria-hidden="true"></i>
+                    <p data-field="job"></p>
+                    <i data-lucide="graduation-cap" aria-hidden="true"></i>
+                    <p data-field="company"></p>
+                    <i data-lucide="map-pin" aria-hidden="true"></i>
+                    <p data-field="location"></p>
+                  </div>
+                  <span class="more-hint"><i data-lucide="chevron-up" aria-hidden="true"></i>Scroll for more</span>
+                </div>
               </div>
-              <div class="about">
-                <i data-lucide="briefcase" aria-hidden="true"></i>
-                <p data-field="job"></p>
-                <i data-lucide="graduation-cap" aria-hidden="true"></i>
-                <p data-field="company"></p>
-                <i data-lucide="map-pin" aria-hidden="true"></i>
-                <p data-field="location"></p>
-              </div>
-            </figcaption>
+              <section class="prompts" aria-label="Prompts"></section>
+            </div>
           </figure>
         </template>
         <nav class="commands">
@@ -49,6 +55,32 @@
             <i data-lucide="heart"></i>
           </button>
         </nav>
+        <div class="match" id="match" role="dialog" aria-modal="true" aria-labelledby="match-title" hidden>
+          <h2 class="match-title" id="match-title">It's a Match!</h2>
+          <p class="match-sub">You and Shy have liked each other.</p>
+          <div class="match-photos">
+            <div class="match-photo shy" aria-hidden="true"></div>
+            <label class="match-photo you" for="match-photo-input">
+              <span class="match-photo-empty">
+                <i data-lucide="camera" aria-hidden="true"></i>
+                Add your photo
+              </span>
+              <span class="match-photo-badge" aria-hidden="true"><i data-lucide="camera"></i></span>
+            </label>
+          </div>
+          <p class="match-photo-caption">Your turn: add a photo of you</p>
+          <form class="match-form">
+            <input type="file" id="match-photo-input" name="photo" accept="image/*" class="visually-hidden" />
+            <input name="name" required maxlength="100" placeholder="Your name" autocomplete="name" aria-label="Your name" />
+            <input name="contact" required maxlength="200" placeholder="Email or phone number" aria-label="Email or phone number" />
+            <textarea name="message" rows="2" maxlength="1000" placeholder="Say something nice (optional)" aria-label="Message"></textarea>
+            <input name="website" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+            <input type="hidden" name="card" />
+            <button type="submit" class="match-send">Send</button>
+            <button type="button" class="match-skip">Keep swiping</button>
+            <p class="match-status" role="status"></p>
+          </form>
+        </div>
       </div>
     </main>
     <script type="module" src="/src/main.js"></script>

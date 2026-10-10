@@ -1,13 +1,14 @@
-import { createIcons, Briefcase, GraduationCap, MapPin, X, Star, Heart } from "lucide";
+import { createIcons, Briefcase, Camera, ChevronUp, GraduationCap, MapPin, X, Star, Heart } from "lucide";
 import profiles from "./data.json";
+import { isMatchOpen, openMatch } from "./match.js";
 import "./style.css";
 
-const icons = { Briefcase, GraduationCap, MapPin, X, Star, Heart };
+const icons = { Briefcase, Camera, ChevronUp, GraduationCap, MapPin, X, Star, Heart };
 createIcons({ icons });
 
 const STACK_SIZE = 3;
 const SWIPE_X = 100; // px past which a release counts as a swipe
-const SWIPE_UP = 120;
+const DRAG_SLOP = 8; // px before a drag commits to swiping or scrolling
 const FLICK_VELOCITY = 0.5; // px/ms; a fast flick counts even if short
 const ROTATION = 0.08; // deg per px of horizontal drag
 const BEHIND_SCALE = 0.94;
@@ -22,13 +23,30 @@ const imageUrl = (n) => `${import.meta.env.BASE_URL}images/shy_${n}.jpg`;
 profiles.forEach((p) => (new Image().src = imageUrl(p.image)));
 
 let nextProfile = 0;
+const cardProfiles = new WeakMap();
 
 function buildCard() {
   const profile = profiles[nextProfile];
   nextProfile = (nextProfile + 1) % profiles.length;
   const card = template.content.firstElementChild.cloneNode(true);
-  card.style.backgroundImage = `url("${imageUrl(profile.image)}")`;
+  cardProfiles.set(card, profile);
+  card.querySelector(".hero").style.backgroundImage = `url("${imageUrl(profile.image)}")`;
   card.querySelectorAll("[data-field]").forEach((el) => (el.textContent = profile[el.dataset.field]));
+  // Unanswered prompts stay hidden until data.json has a real answer
+  const prompts = (profile.prompts ?? []).filter(({ answer }) => answer && answer !== "TODO");
+  if (!prompts.length) card.querySelector(".more-hint").remove();
+  card.querySelector(".prompts").append(
+    ...prompts.map(({ question, answer }) => {
+      const prompt = document.createElement("article");
+      prompt.className = "prompt";
+      const q = document.createElement("h2");
+      q.textContent = question;
+      const a = document.createElement("p");
+      a.textContent = answer;
+      prompt.append(q, a);
+      return prompt;
+    }),
+  );
   createIcons({ icons, root: card });
   return card;
 }
@@ -59,14 +77,10 @@ function layoutStack(progress) {
   }
 }
 
-function setStamps(card, dx, dy) {
+function setStamps(card, dx) {
   const side = Math.min(1, Math.max(0, (Math.abs(dx) - 20) / (SWIPE_X - 20)));
-  const up = Math.min(1, Math.max(0, (-dy - 30) / (SWIPE_UP - 30)));
-  // Whichever direction dominates wins the stamp
-  const superWins = up > side;
-  card.querySelector(".stamp-like").style.opacity = !superWins && dx > 0 ? side : 0;
-  card.querySelector(".stamp-nope").style.opacity = !superWins && dx < 0 ? side : 0;
-  card.querySelector(".stamp-super").style.opacity = superWins ? up : 0;
+  card.querySelector(".stamp-like").style.opacity = dx > 0 ? side : 0;
+  card.querySelector(".stamp-nope").style.opacity = dx < 0 ? side : 0;
 }
 
 function cardTransform(dx, dy, rotateSign) {
@@ -84,12 +98,14 @@ function flyOut(card, { dx, dy, vx = 0, vy = 0, rotateSign = 1, direction }) {
 
   const distance = Math.max(innerWidth, innerHeight) * 1.2;
   let toX, toY;
+  let liked = direction === "up";
   if (direction === "up") {
     toX = dx + vx * 200;
     toY = -distance;
   } else {
     const sign = Math.sign(dx) || Math.sign(vx) || 1;
     toX = sign * distance;
+    liked = sign > 0;
     // Keep the throw angle consistent with the release velocity
     toY = dy + (Math.abs(vx) > 0.1 ? (vy / Math.abs(vx)) * (distance - Math.abs(dx)) : 0);
   }
@@ -107,6 +123,11 @@ function flyOut(card, { dx, dy, vx = 0, vy = 0, rotateSign = 1, direction }) {
     .finished.then(() => card.remove());
   // Animations pause in background tabs; don't let thrown cards pile up
   setTimeout(() => card.remove(), duration + 100);
+
+  if (liked) {
+    const profile = cardProfiles.get(card);
+    setTimeout(() => openMatch(profile, imageUrl(profile.image)), reducedMotion ? 0 : duration * 0.6);
+  }
 }
 
 function snapBack(card) {
@@ -120,30 +141,36 @@ function snapBack(card) {
   layoutStack(0);
 }
 
-// Dragging
+// Dragging. Sideways drags swipe the card; vertical drags scroll its prompts
+// (touch scrolling is native via touch-action: pan-y, mouse is handled here).
 let drag = null;
 
 deck.addEventListener("pointerdown", (e) => {
   const card = topCard();
-  if (!card || !card.contains(e.target) || drag) return;
-  card.setPointerCapture(e.pointerId);
+  if (!card || !card.contains(e.target) || drag || e.button > 0 || isMatchOpen()) return;
   const rect = card.getBoundingClientRect();
   drag = {
     card,
+    mode: null,
     pointerId: e.pointerId,
     startX: e.clientX,
     startY: e.clientY,
+    startScroll: card.querySelector(".card-scroll").scrollTop,
     dx: 0,
     dy: 0,
     // Grabbing the bottom half tilts the card the other way, like holding a real card
     rotateSign: e.clientY > rect.top + rect.height / 2 ? -1 : 1,
     samples: [{ x: e.clientX, y: e.clientY, t: e.timeStamp }],
   };
+  card.setPointerCapture(e.pointerId);
+});
+
+function startSwipe(card) {
   card.style.transition = "none";
   card.querySelectorAll(".stamp").forEach((s) => (s.style.transition = "none"));
   stack().forEach((c) => (c.style.transition = "none"));
   card.classList.add("moving");
-});
+}
 
 deck.addEventListener("pointermove", (e) => {
   if (!drag || e.pointerId !== drag.pointerId) return;
@@ -153,15 +180,26 @@ deck.addEventListener("pointermove", (e) => {
   if (drag.samples.length > 5) drag.samples.shift();
 
   const { card, dx, dy, rotateSign } = drag;
+  if (!drag.mode) {
+    if (Math.hypot(dx, dy) < DRAG_SLOP) return;
+    drag.mode = Math.abs(dx) > Math.abs(dy) ? "swipe" : "scroll";
+    if (drag.mode === "swipe") startSwipe(card);
+  }
+
+  if (drag.mode === "scroll") {
+    if (e.pointerType === "mouse") card.querySelector(".card-scroll").scrollTop = drag.startScroll - dy;
+    return;
+  }
   card.style.transform = cardTransform(dx, dy, rotateSign);
-  setStamps(card, dx, dy);
-  layoutStack(Math.min(1, Math.max(Math.abs(dx) / SWIPE_X, -dy / SWIPE_UP, 0)));
+  setStamps(card, dx);
+  layoutStack(Math.min(1, Math.abs(dx) / SWIPE_X));
 });
 
 function endDrag(e) {
   if (!drag || e.pointerId !== drag.pointerId) return;
-  const { card, dx, dy, rotateSign, samples } = drag;
+  const { card, mode, dx, dy, rotateSign, samples } = drag;
   drag = null;
+  if (mode !== "swipe") return;
   card.classList.remove("moving");
 
   // Velocity from the last few samples, so a pause before release reads as slow
@@ -171,12 +209,8 @@ function endDrag(e) {
   const vx = (last.x - first.x) / dt;
   const vy = (last.y - first.y) / dt;
 
-  const flickX = Math.abs(vx) > FLICK_VELOCITY && Math.sign(vx) === Math.sign(dx);
-  const flickUp = vy < -FLICK_VELOCITY && dy < 0 && Math.abs(vy) > Math.abs(vx);
-
-  if ((-dy > SWIPE_UP && -dy > Math.abs(dx)) || flickUp) {
-    flyOut(card, { dx, dy, vx, vy, rotateSign, direction: "up" });
-  } else if (Math.abs(dx) > SWIPE_X || flickX) {
+  const flick = Math.abs(vx) > FLICK_VELOCITY && Math.sign(vx) === Math.sign(dx);
+  if (Math.abs(dx) > SWIPE_X || flick) {
     flyOut(card, { dx, dy, vx, vy, rotateSign, direction: "side" });
   } else {
     snapBack(card);
@@ -184,12 +218,19 @@ function endDrag(e) {
 }
 
 deck.addEventListener("pointerup", endDrag);
-deck.addEventListener("pointercancel", endDrag);
+// The browser cancels the pointer when it takes over a native touch scroll
+deck.addEventListener("pointercancel", (e) => {
+  if (drag?.mode === "swipe" && e.pointerId === drag.pointerId) {
+    drag.card.classList.remove("moving");
+    snapBack(drag.card);
+  }
+  drag = null;
+});
 
 // Buttons
 function react(reaction) {
   const card = topCard();
-  if (!card || drag) return;
+  if (!card || drag || isMatchOpen()) return;
 
   if (reaction === "super_like") {
     card.querySelector(".stamp-super").style.opacity = 1;
