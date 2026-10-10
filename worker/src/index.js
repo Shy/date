@@ -34,7 +34,12 @@ export default {
     // Honeypot: real people never see this field
     if (form.get("website")) return json({ ok: true });
 
-    const field = (k) => String(form.get(k) ?? "").trim();
+    // Strip control chars (incl. CR/LF) so nothing can smuggle extra email headers via the subject
+    // (the message only goes in the body, so it keeps its newlines)
+    const field = (k) =>
+      String(form.get(k) ?? "")
+        .replace(k === "message" ? /[^\S\n ]|[\u0000-\u0009\u000b-\u001f\u007f]/g : /[\s\u0000-\u001f\u007f]+/g, " ")
+        .trim();
     const data = Object.fromEntries(Object.keys(LIMITS).map((k) => [k, field(k)]));
     if (!data.name || !data.contact) return json({ error: "Name and contact are required" }, 400);
     if (!EMAIL_RE.test(data.contact) && !isPhone(data.contact)) {
@@ -46,16 +51,15 @@ export default {
 
     const photo = form.get("photo");
     if (!(photo instanceof File) || photo.size === 0) return json({ error: "A photo is required" }, 400);
-    if (!photo.type.startsWith("image/")) return json({ error: "Photo must be an image" }, 400);
     if (photo.size > MAX_PHOTO_BYTES) return json({ error: "Photo is too large" }, 400);
-    const attachments = [
-      {
-        disposition: "attachment",
-        filename: photo.name || "photo.jpg",
-        type: photo.type,
-        content: await photo.arrayBuffer(),
-      },
-    ];
+    // The site always re-encodes to JPEG, so only accept real JPEG bytes and never trust the
+    // client's filename or MIME type (e.g. an SVG/HTML file labelled image/*)
+    const content = await photo.arrayBuffer();
+    const magic = new Uint8Array(content, 0, Math.min(3, content.byteLength));
+    if (!(magic[0] === 0xff && magic[1] === 0xd8 && magic[2] === 0xff)) {
+      return json({ error: "Photo must be an image" }, 400);
+    }
+    const attachments = [{ disposition: "attachment", filename: "photo.jpg", type: "image/jpeg", content }];
 
     const rows = [
       ["Name", data.name],
