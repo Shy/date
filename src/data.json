@@ -16,22 +16,6 @@
     ]
   },
   {
-    "job": "Amateur Chef",
-    "company": "Sunday Nights",
-    "location": "Brooklyn, NY",
-    "image": "2",
-    "prompts": [
-      {
-        "question": "My signature dish",
-        "answer": "TODO"
-      },
-      {
-        "question": "Dinner guests always ask me to make",
-        "answer": "TODO"
-      }
-    ]
-  },
-  {
     "job": "Aspiring Baker",
     "company": "For Friends",
     "location": "Brooklyn, NY",
@@ -107,6 +91,22 @@
       },
       {
         "question": "I'm looking for",
+        "answer": "TODO"
+      }
+    ]
+  },
+  {
+    "job": "Nerd with a job",
+    "company": "M-F",
+    "location": "Brooklyn, NY",
+    "image": "2",
+    "prompts": [
+      {
+        "question": "What I'm nerdiest about",
+        "answer": "TODO"
+      },
+      {
+        "question": "After 5pm on a Friday you'll find me",
         "answer": "TODO"
       }
     ]
