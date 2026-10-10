@@ -144,6 +144,12 @@ body {
   color: #1a1a1a;
 }
 
+.prompt p.long {
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
 .stamp {
   position: absolute;
   z-index: 1;

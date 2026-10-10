@@ -43,6 +43,8 @@ function buildCard() {
       q.textContent = question;
       const a = document.createElement("p");
       a.textContent = answer;
+      // Long answers get a smaller size so they don't become a wall of bold text
+      if (answer.length > 110) a.className = "long";
       prompt.append(q, a);
       return prompt;
     }),

@@ -6,8 +6,8 @@
     "image": "1",
     "prompts": [
       {
-        "question": "My ideal party",
-        "answer": "TODO"
+        "question": "I'll brag about you to my friends if",
+        "answer": "You unironically love an odd hobby, subculture, or craft and aren't afraid to get deeply nerdy about it."
       }
     ]
   },
@@ -18,8 +18,8 @@
     "image": "3",
     "prompts": [
       {
-        "question": "Best thing I've ever baked",
-        "answer": "TODO"
+        "question": "Together we could",
+        "answer": "Agree to hold each other's credit cards at the bookstore & hardware store to prevent reckless spending, only to immediately fold and enable each other to buy stuff we don't need anyway."
       }
     ]
   },
@@ -30,8 +30,8 @@
     "image": "4",
     "prompts": [
       {
-        "question": "Best wedding I've been to",
-        "answer": "TODO"
+        "question": "The one thing you should know about me",
+        "answer": "I don't drink, but I love bringing friends together for good food, low-key dinner nights, and weirdly specific homemade ice cream experiments. I'm obsessed with a peanut butter and Coke sorbet recipe."
       }
     ]
   },
