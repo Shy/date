@@ -1,6 +1,7 @@
 // "It's a Match!" overlay shown after a like; posts to the Cloudflare Worker in /worker.
 
 const ENDPOINT = "/api/match";
+const tap = matchMedia("(pointer: fine)").matches ? "Click" : "Tap";
 const MAX_PHOTO_EDGE = 1600; // px; keeps uploads well under the email size cap
 // Keep in sync with worker/src/index.js
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,6 +24,8 @@ export const isMatchOpen = () => !overlay.hidden;
 export function openMatch(profile, imageUrl) {
   clearTimeout(closeTimer);
   shyPhoto.style.backgroundImage = `url("${imageUrl}")`;
+  shyPhoto.classList.toggle("focused", Boolean(profile.matchFocus));
+  shyPhoto.style.setProperty("--focus", profile.matchFocus ?? "");
   form.elements.card.value = `${profile.job} (photo ${profile.image})`;
   status.textContent = "";
   sendButton.disabled = false;
@@ -70,7 +73,7 @@ photoInput.addEventListener("change", async () => {
     resizedPhoto = await resize(file);
     yourPhoto.style.backgroundImage = `url("${URL.createObjectURL(resizedPhoto)}")`;
     yourPhoto.classList.add("filled");
-    photoCaption.textContent = "Tap your photo to change it";
+    photoCaption.textContent = `${tap} your photo to change it`;
   } catch {
     status.textContent = "Couldn't read that photo. Try a different one?";
   }
@@ -86,7 +89,7 @@ form.addEventListener("submit", async (e) => {
   }
   // Fair's fair: they've seen Shy, so a photo is required
   if (!resizedPhoto) {
-    status.textContent = "Add a photo of you first. Tap the camera.";
+    status.textContent = `Add a photo of you first. ${tap} the camera.`;
     yourPhoto.animate(
       [{ translate: "0" }, { translate: "-6px" }, { translate: "6px" }, { translate: "-4px" }, { translate: "0" }],
       { duration: 350 },

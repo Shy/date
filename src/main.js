@@ -1,6 +1,9 @@
 import { createIcons, Briefcase, Camera, ChevronUp, GraduationCap, MapPin, X, Star, Heart } from "lucide";
 import profiles from "./data.json";
 import { isMatchOpen, openMatch } from "./match.js";
+import "@fontsource/roboto/latin-400.css";
+import "@fontsource/roboto/latin-500.css";
+import "@fontsource/roboto/latin-700.css";
 import "./style.css";
 
 const icons = { Briefcase, Camera, ChevronUp, GraduationCap, MapPin, X, Star, Heart };
@@ -17,10 +20,13 @@ const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const deck = document.querySelector(".deck");
 const template = document.getElementById("card-template");
-const imageUrl = (n) => `${import.meta.env.BASE_URL}images/shy_${n}.jpg`;
+// Bundled so filenames are content-hashed and safe to cache long-term
+const images = import.meta.glob("./images/shy_*.webp", { eager: true, query: "?url", import: "default" });
+const imageUrl = (n) => images[`./images/shy_${n}.webp`];
 
-// Warm the cache so incoming cards never flash blank
-profiles.forEach((p) => (new Image().src = imageUrl(p.image)));
+// Warm the cache so incoming cards never flash blank, but only after the first
+// photo (preloaded in index.html) has had the network to itself
+addEventListener("load", () => profiles.forEach((p) => (new Image().src = imageUrl(p.image))));
 
 let nextProfile = 0;
 const cardProfiles = new WeakMap();

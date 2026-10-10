@@ -18,14 +18,18 @@ body {
   min-height: 100dvh;
   display: grid;
   place-items: center;
-  overflow: hidden;
+  /* Thrown cards are clipped by .screen, so the page itself can scroll as a fallback */
+  overflow-x: hidden;
   font-family: "Roboto", system-ui, sans-serif;
   background: var(--bg);
 }
 
 .smartphone {
-  width: clamp(290px, 49dvh, 360px);
-  height: clamp(580px, 98dvh, 720px);
+  /* Fit short desktop windows: shrink with the viewport, keep a 1:2 phone shape */
+  --phone-h: clamp(480px, calc(100dvh - 16px), 720px);
+  height: var(--phone-h);
+  width: clamp(240px, calc(var(--phone-h) / 2), 360px);
+  margin: 8px 0;
   border: 8px solid black;
   border-radius: 15px;
 }
@@ -317,6 +321,12 @@ body {
   box-shadow: 0 4px 14px rgb(0 0 0 / 0.2);
 }
 
+/* Profiles can set "matchFocus" in data.json to zoom the circle onto a face */
+.match-photo.shy.focused {
+  background-size: 170%;
+  background-position: var(--focus);
+}
+
 .match-photo.you {
   position: relative;
   margin-left: -14px;
@@ -451,6 +461,43 @@ body {
   white-space: nowrap;
 }
 
+/* Short windows (small laptops, landscape): tighten the match screen so Send stays on screen */
+@media (max-height: 700px) {
+  .match {
+    gap: 8px;
+    padding: 16px 18px;
+  }
+
+  .match-title {
+    font-size: 2rem;
+  }
+
+  .match-sub {
+    display: none;
+  }
+
+  .match-photo {
+    width: 80px;
+    height: 80px;
+  }
+
+  .match-photo-empty {
+    font-size: 0.7rem;
+  }
+
+  .match-form {
+    gap: 7px;
+  }
+
+  .match-form :is(input, textarea) {
+    padding: 8px 12px;
+  }
+
+  .match-form button {
+    padding: 9px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .more-hint svg { animation: none; }
 }
@@ -459,6 +506,7 @@ body {
   .smartphone {
     width: 100%;
     height: 100dvh;
+    margin: 0;
     border: none;
     border-radius: 0;
   }

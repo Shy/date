@@ -4,6 +4,7 @@
     "company": "Assorted Parties",
     "location": "Brooklyn, NY",
     "image": "1",
+    "matchFocus": "50% 13%",
     "prompts": [
       {
         "question": "I'll brag about you to my friends if",
@@ -52,6 +53,7 @@
     "company": "When asked",
     "location": "NY,NY",
     "image": "6",
+    "matchFocus": "72% 42%",
     "prompts": [
       {
         "question": "How I became ordained",
@@ -76,6 +78,7 @@
     "company": "M-F",
     "location": "Brooklyn, NY",
     "image": "2",
+    "matchFocus": "30% 26%",
     "prompts": [
       {
         "question": "What I'm nerdiest about",

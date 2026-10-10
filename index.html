@@ -6,12 +6,9 @@
     <meta name="theme-color" content="#faf9f6" />
     <meta name="description" content="A dating app with exactly one match available." />
     <title>Shy.Date</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
-    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- First card's photo (data.json[0]); fetched before JS so the hero paints sooner -->
+    <link rel="preload" as="image" href="/src/images/shy_1.webp" fetchpriority="high" />
   </head>
   <body>
     <main class="smartphone">
@@ -73,7 +70,7 @@
             <input type="file" id="match-photo-input" name="photo" accept="image/*" class="visually-hidden" />
             <input name="name" required maxlength="100" placeholder="Your name" autocomplete="name" aria-label="Your name" />
             <input name="contact" required maxlength="200" placeholder="Email or phone number" aria-label="Email or phone number" />
-            <textarea name="message" rows="2" maxlength="1000" placeholder="Say something nice (optional)" aria-label="Message"></textarea>
+            <textarea name="message" rows="2" maxlength="1000" placeholder="Pitch our first date (optional)" aria-label="Message"></textarea>
             <input name="website" class="visually-hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
             <input type="hidden" name="card" />
             <button type="submit" class="match-send">Send</button>
