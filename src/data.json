@@ -8,10 +8,6 @@
       {
         "question": "My ideal party",
         "answer": "TODO"
-      },
-      {
-        "question": "The way to win me over is",
-        "answer": "TODO"
       }
     ]
   },
@@ -23,10 +19,6 @@
     "prompts": [
       {
         "question": "Best thing I've ever baked",
-        "answer": "TODO"
-      },
-      {
-        "question": "My biggest kitchen disaster",
         "answer": "TODO"
       }
     ]
@@ -40,10 +32,6 @@
       {
         "question": "Best wedding I've been to",
         "answer": "TODO"
-      },
-      {
-        "question": "My go-to dance move",
-        "answer": "TODO"
       }
     ]
   },
@@ -55,10 +43,6 @@
     "prompts": [
       {
         "question": "My bake sale strategy",
-        "answer": "TODO"
-      },
-      {
-        "question": "I'll fall for you if",
         "answer": "TODO"
       }
     ]
@@ -72,10 +56,6 @@
       {
         "question": "How I became ordained",
         "answer": "TODO"
-      },
-      {
-        "question": "Weirdest ceremony I've officiated",
-        "answer": "TODO"
       }
     ]
   },
@@ -88,10 +68,6 @@
       {
         "question": "A typical Sunday",
         "answer": "TODO"
-      },
-      {
-        "question": "I'm looking for",
-        "answer": "TODO"
       }
     ]
   },
@@ -103,10 +79,6 @@
     "prompts": [
       {
         "question": "What I'm nerdiest about",
-        "answer": "TODO"
-      },
-      {
-        "question": "After 5pm on a Friday you'll find me",
         "answer": "TODO"
       }
     ]
