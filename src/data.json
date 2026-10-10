@@ -20,7 +20,7 @@
     "prompts": [
       {
         "question": "Together we could",
-        "answer": "Agree to hold each other's credit cards at the bookstore & hardware store to prevent reckless spending, only to immediately fold and enable each other to buy stuff we don't need anyway."
+        "answer": "Agree to hold each other's credit cards at the bookstore and hardware store to prevent reckless spending, only to immediately fold and enable each other to buy stuff we don't need anyway."
       }
     ]
   },
@@ -39,19 +39,19 @@
   {
     "job": "Bake Sale Participant",
     "company": "Bake Sales",
-    "location": "Brooklyn",
+    "location": "Brooklyn, NY",
     "image": "5",
     "prompts": [
       {
         "question": "Dating me is like",
-        "answer": "a mix of dressing up for great reservations, low-key project nights at home, and enthusiastically saying yes to being your plus-one for whatever dance party or event you’re dying to go to. Show me something entirely new and unexpected."
+        "answer": "A mix of dressing up for great reservations, low-key project nights at home, and enthusiastically saying yes to being your plus-one for whatever dance party or event you're dying to go to. Show me something entirely new and unexpected."
       }
     ]
   },
   {
     "job": "Ordained Minister",
     "company": "When asked",
-    "location": "NY,NY",
+    "location": "New York, NY",
     "image": "6",
     "matchFocus": "72% 42%",
     "prompts": [
@@ -64,7 +64,7 @@
   {
     "job": "Amateur Chef",
     "company": "Sunday Nights",
-    "location": "Brooklyn",
+    "location": "Brooklyn, NY",
     "image": "7",
     "prompts": [
       {
@@ -75,7 +75,7 @@
   },
   {
     "job": "Nerd with a job",
-    "company": "M-F",
+    "company": "M–F",
     "location": "Brooklyn, NY",
     "image": "2",
     "matchFocus": "30% 26%",
