@@ -1,4 +1,6 @@
 // Receives "It's a Match!" form posts from shy.date and emails them to MATCH_TO.
+// Also fronts /assets/* to give Vite's content-hashed files a long browser cache
+// (GitHub Pages only sends max-age=600 and can't be configured).
 
 const MAX_PHOTO_BYTES = 3.5 * 1024 * 1024; // email cap is 5 MiB after base64
 const LIMITS = { name: 100, contact: 200, message: 1000, card: 200 };
@@ -15,9 +17,19 @@ const json = (body, status = 200) =>
 const escapeHtml = (s) =>
   s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
+// Filenames under /assets/ change whenever their content does, so they never go stale
+async function cacheForever(request) {
+  const origin = await fetch(request);
+  if (!origin.ok) return origin;
+  const response = new Response(origin.body, origin);
+  response.headers.set("cache-control", "public, max-age=31536000, immutable");
+  return response;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname.startsWith("/assets/")) return cacheForever(request);
     if (url.pathname !== "/api/match") return json({ error: "Not found" }, 404);
     if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
 

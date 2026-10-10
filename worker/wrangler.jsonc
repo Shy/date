@@ -3,7 +3,10 @@
   "name": "shy-date-match",
   "main": "src/index.js",
   "compatibility_date": "2026-10-01",
-  "routes": [{ "pattern": "shy.date/api/*", "zone_name": "shy.date" }],
+  "routes": [
+    { "pattern": "shy.date/api/*", "zone_name": "shy.date" },
+    { "pattern": "shy.date/assets/*", "zone_name": "shy.date" }
+  ],
   "send_email": [{ "name": "EMAIL" }],
   "vars": {
     "FROM_ADDRESS": "no-reply@shy.date",
