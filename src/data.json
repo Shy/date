@@ -43,8 +43,8 @@
     "image": "5",
     "prompts": [
       {
-        "question": "My bake sale strategy",
-        "answer": "TODO"
+        "question": "Dating me is like",
+        "answer": "a mix of dressing up for great reservations, low-key project nights at home, and enthusiastically saying yes to being your plus-one for whatever dance party or event you’re dying to go to. Show me something entirely new and unexpected."
       }
     ]
   },
@@ -68,8 +68,8 @@
     "image": "7",
     "prompts": [
       {
-        "question": "A typical Sunday",
-        "answer": "TODO"
+        "question": "My most controversial opinion",
+        "answer": "Dessert should be planned before the main course. Dinner is just the opening act. Also, the best knife to cut dessert is a cleaver."
       }
     ]
   },
@@ -81,8 +81,8 @@
     "matchFocus": "30% 26%",
     "prompts": [
       {
-        "question": "What I'm nerdiest about",
-        "answer": "TODO"
+        "question": "I'm weirdly competitive about",
+        "answer": "Mundane nonsense. I've never lost, mostly because nobody else knows it's a competition."
       }
     ]
   }
