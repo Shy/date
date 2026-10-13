@@ -225,6 +225,26 @@ function endDrag(e) {
   }
 }
 
+// iOS Safari has no direction lock: with touch-action: pan-y, any vertical component starts a
+// native scroll and cancels the pointer mid-swipe. Decide on the first touchmove and, for a
+// sideways drag, block the native scroll so the swipe keeps its pointer.
+deck.addEventListener(
+  "touchmove",
+  (e) => {
+    if (!drag) return;
+    if (!drag.mode) {
+      const t = e.touches[0];
+      const dx = t.clientX - drag.startX;
+      const dy = t.clientY - drag.startY;
+      if (!dx && !dy) return;
+      drag.mode = Math.abs(dx) >= Math.abs(dy) ? "swipe" : "scroll";
+      if (drag.mode === "swipe") startSwipe(drag.card);
+    }
+    if (drag.mode === "swipe") e.preventDefault();
+  },
+  { passive: false },
+);
+
 deck.addEventListener("pointerup", endDrag);
 // The browser cancels the pointer when it takes over a native touch scroll
 deck.addEventListener("pointercancel", (e) => {
