@@ -2,7 +2,6 @@
   --bg: #faf9f6;
   --screen: #fffafa;
   --like: #1be4a1;
-  --super: #2db1ff;
   --nope: #fd5068;
 }
 
@@ -182,16 +181,6 @@ body {
   rotate: 15deg;
 }
 
-.stamp-super {
-  color: var(--super);
-  top: auto;
-  bottom: 32%;
-  left: 50%;
-  translate: -50% 0;
-  rotate: -10deg;
-  font-size: 2.2rem;
-}
-
 .personal {
   width: 100%;
   padding: 15px 15px 10px;
@@ -230,7 +219,8 @@ body {
   width: 100%;
   height: 100px;
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
+  gap: 64px;
   align-items: center;
 }
 
@@ -245,11 +235,6 @@ body {
   box-shadow: 0 2px 6px 0 rgb(112 125 134 / 0.14);
   cursor: pointer;
   transition: 500ms ease;
-}
-
-.command.small {
-  width: 48px;
-  height: 48px;
 }
 
 .command svg {
@@ -269,9 +254,8 @@ body {
 }
 
 .nope { color: var(--nope); }
-.super { color: var(--super); }
 .heart { color: var(--like); }
-.super svg, .heart svg { fill: currentColor; }
+.heart svg { fill: currentColor; }
 
 /* It's a Match! */
 .match {

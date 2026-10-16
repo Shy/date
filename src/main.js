@@ -1,4 +1,4 @@
-import { createIcons, Briefcase, Camera, ChevronUp, GraduationCap, MapPin, X, Star, Heart } from "lucide";
+import { createIcons, Briefcase, Camera, ChevronUp, GraduationCap, MapPin, X, Heart } from "lucide";
 import profiles from "./data.json";
 import { isMatchOpen, openMatch } from "./match.js";
 import "@fontsource/roboto/latin-400.css";
@@ -6,7 +6,7 @@ import "@fontsource/roboto/latin-500.css";
 import "@fontsource/roboto/latin-700.css";
 import "./style.css";
 
-const icons = { Briefcase, Camera, ChevronUp, GraduationCap, MapPin, X, Star, Heart };
+const icons = { Briefcase, Camera, ChevronUp, GraduationCap, MapPin, X, Heart };
 createIcons({ icons });
 
 const STACK_SIZE = 3;
@@ -96,7 +96,7 @@ function cardTransform(dx, dy, rotateSign) {
 }
 
 // Throw the top card off-screen, then drop it and refill the stack
-function flyOut(card, { dx, dy, vx = 0, vy = 0, rotateSign = 1, direction }) {
+function flyOut(card, { dx, dy, vx = 0, vy = 0, rotateSign = 1 }) {
   card.classList.add("flying");
   card.inert = true;
   card.style.zIndex = STACK_SIZE + 1;
@@ -105,18 +105,11 @@ function flyOut(card, { dx, dy, vx = 0, vy = 0, rotateSign = 1, direction }) {
   fillDeck();
 
   const distance = Math.max(innerWidth, innerHeight) * 1.2;
-  let toX, toY;
-  let liked = direction === "up";
-  if (direction === "up") {
-    toX = dx + vx * 200;
-    toY = -distance;
-  } else {
-    const sign = Math.sign(dx) || Math.sign(vx) || 1;
-    toX = sign * distance;
-    liked = sign > 0;
-    // Keep the throw angle consistent with the release velocity
-    toY = dy + (Math.abs(vx) > 0.1 ? (vy / Math.abs(vx)) * (distance - Math.abs(dx)) : 0);
-  }
+  const sign = Math.sign(dx) || Math.sign(vx) || 1;
+  const liked = sign > 0;
+  const toX = sign * distance;
+  // Keep the throw angle consistent with the release velocity
+  const toY = dy + (Math.abs(vx) > 0.1 ? (vy / Math.abs(vx)) * (distance - Math.abs(dx)) : 0);
   const speed = Math.max(Math.hypot(vx, vy), 1);
   const duration = reducedMotion ? 150 : Math.min(500, Math.max(250, 450 / speed));
 
@@ -219,7 +212,7 @@ function endDrag(e) {
 
   const flick = Math.abs(vx) > FLICK_VELOCITY && Math.sign(vx) === Math.sign(dx);
   if (Math.abs(dx) > SWIPE_X || flick) {
-    flyOut(card, { dx, dy, vx, vy, rotateSign, direction: "side" });
+    flyOut(card, { dx, dy, vx, vy, rotateSign });
   } else {
     snapBack(card);
   }
@@ -260,15 +253,10 @@ function react(reaction) {
   const card = topCard();
   if (!card || drag || isMatchOpen()) return;
 
-  if (reaction === "super_like") {
-    card.querySelector(".stamp-super").style.opacity = 1;
-    flyOut(card, { dx: 0, dy: 0, vx: 0, vy: -1.5, direction: "up" });
-    return;
-  }
   const nope = reaction === "dislike";
   card.querySelector(nope ? ".stamp-nope" : ".stamp-like").style.opacity = 1;
   const sign = nope ? -1 : 1;
-  flyOut(card, { dx: 0, dy: 0, vx: sign * 1.5, vy: -0.3, direction: "side" });
+  flyOut(card, { dx: 0, dy: 0, vx: sign * 1.5, vy: -0.3 });
 }
 
 document.querySelectorAll("[data-reaction]").forEach((btn) =>
@@ -279,7 +267,7 @@ document.querySelectorAll("[data-reaction]").forEach((btn) =>
 );
 
 addEventListener("keydown", (e) => {
-  const key = { ArrowLeft: "dislike", ArrowRight: "like", ArrowUp: "super_like" }[e.key];
+  const key = { ArrowLeft: "dislike", ArrowRight: "like" }[e.key];
   if (key) react(key);
 });
 

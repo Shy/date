@@ -18,7 +18,6 @@
           <figure class="photo">
             <span class="stamp stamp-like" aria-hidden="true">LIKE</span>
             <span class="stamp stamp-nope" aria-hidden="true">NOPE</span>
-            <span class="stamp stamp-super" aria-hidden="true">SUPER<br />LIKE</span>
             <div class="card-scroll">
               <div class="hero">
                 <div class="personal">
@@ -42,13 +41,10 @@
           </figure>
         </template>
         <nav class="commands">
-          <button class="command small nope" type="button" data-reaction="dislike" aria-label="Nope">
+          <button class="command nope" type="button" data-reaction="dislike" aria-label="Nope">
             <i data-lucide="x"></i>
           </button>
-          <button class="command super" type="button" data-reaction="super_like" aria-label="Super like">
-            <i data-lucide="star"></i>
-          </button>
-          <button class="command small heart" type="button" data-reaction="like" aria-label="Like">
+          <button class="command heart" type="button" data-reaction="like" aria-label="Like">
             <i data-lucide="heart"></i>
           </button>
         </nav>
